@@ -1,0 +1,42 @@
+#include <Arduino.h>
+#include "WiFi_manager.h"
+#include "BLE_manager.h"
+#include "DeviceConfig.h"
+
+void StartWiFi() {
+    // DeviceConfig에서 SSID와 비밀번호 가져오기
+    DeviceConfig& config = DeviceConfig::getInstance();
+    const char* ssid = config.getSSID();
+    const char* pswd = config.getPassword();
+
+    // WiFi Access Point 시작
+    WiFi.mode(WIFI_AP);
+    WiFi.softAP(ssid, pswd);
+
+    // WiFi AP 시작 후 정보 출력
+    Serial.print("WiFi AP started with SSID: ");
+    Serial.println(ssid);
+}
+void ScanAndSend() {
+    digitalWrite(LED_BUILTIN, HIGH);
+    int n = WiFi.scanNetworks();
+    digitalWrite(LED_BUILTIN, LOW);
+
+    if (n == 0) {
+        Serial.println("No networks found.");
+    } else {
+        Serial.printf("%d networks found:\n", n);
+        for (int i = 0; i < n; i++) {
+            const char* foundSSID = WiFi.SSID(i).c_str();
+            int rssi = WiFi.RSSI(i);
+            notifyWiFiStatus(foundSSID, rssi);
+            delay(10);
+        }
+    }
+}
+
+bool isScanEnabled() {
+    // DeviceConfig에서 스캔 토글 값 가져오기
+    DeviceConfig& config = DeviceConfig::getInstance();
+    return config.getScanToggle() == 1;  // 스캔 토글이 1이면 활성화된 상태
+}
