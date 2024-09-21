@@ -41,7 +41,7 @@ void resetEEPROM() {
     // WiFi 스캔 설정 (기본값: 활성화)
     writeEEPROM(EEPROM_ADDR_SCAN, "1");
 
-    // 광고 주기 설정 (기본값: 0)
+    // Advertise 주기 설정 (기본값: 0)
     writeEEPROM(EEPROM_ADDR_INTV, "0");
 
     // 최대 송신 전력 설정 (기본값: 80)
@@ -67,7 +67,7 @@ void loadDeviceConfigFromEEPROM() {
     readEEPROM(EEPROM_ADDR_SCAN, scan_toggle);
     config.setScanToggle(atoi(scan_toggle));
 
-    // 광고 주기 설정 읽기
+    // Advertise 주기 설정 읽기
     char adv_interval[10];
     readEEPROM(EEPROM_ADDR_INTV, adv_interval);
     config.setAdvInterval(atoi(adv_interval));

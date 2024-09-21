@@ -1,9 +1,8 @@
+#include <Arduino.h>
 #include "BLE_manager.h"
 #include "Command_handler.h"  // 명령어 처리 모듈
 #include "DeviceConfig.h"
-#include <Arduino.h>
 
-// 전역 변수
 BLEServer  *pServer  = NULL;
 BLEService *pService = NULL;
 BLECharacteristic *pTxCharacteristic;
@@ -12,6 +11,7 @@ BLECharacteristic *pRxCharacteristic;
 static bool deviceConnected = false;
 static bool oldDeviceConnected = false;
 
+// BLE 인스턴스 시작. SSID 변경 하려면 다른 함수 호출   // TODO : 어떤 함수인지 설명
 void StartBLE() {
     DeviceConfig& config = DeviceConfig::getInstance();  // DeviceConfig 싱글톤 인스턴스 가져오기
     const char* ssid = config.getSSID();               // SSID 가져오기
@@ -44,7 +44,6 @@ void handleBLEConnectionChanges() {
         oldDeviceConnected = deviceConnected;
     }
 }
-
 
 // BLE 연결 상태를 반환하는 함수
 bool isBLEConnected() {
@@ -95,3 +94,5 @@ void MyServerCallbacks::onConnect(BLEServer* pServer) {
 void MyServerCallbacks::onDisconnect(BLEServer* pServer) {
     deviceConnected = false;
 }
+
+// TODO : 온라인 SSID 변경 구현

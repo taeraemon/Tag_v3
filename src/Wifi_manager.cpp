@@ -3,6 +3,7 @@
 #include "BLE_manager.h"
 #include "DeviceConfig.h"
 
+// Wifi 인스턴스 시작. 재호출 시 ssid 업데이트 되어 시작
 void StartWiFi() {
     // DeviceConfig에서 SSID와 비밀번호 가져오기
     DeviceConfig& config = DeviceConfig::getInstance();
@@ -17,6 +18,8 @@ void StartWiFi() {
     Serial.print("WiFi AP started with SSID: ");
     Serial.println(ssid);
 }
+
+// 주변 AP 스캔을 시작, BLE로 전송
 void ScanAndSend() {
     digitalWrite(LED_BUILTIN, HIGH);
     int n = WiFi.scanNetworks();
@@ -35,6 +38,7 @@ void ScanAndSend() {
     }
 }
 
+// 스캔 토글 확인
 bool isScanEnabled() {
     // DeviceConfig에서 스캔 토글 값 가져오기
     DeviceConfig& config = DeviceConfig::getInstance();

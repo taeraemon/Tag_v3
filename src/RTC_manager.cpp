@@ -1,7 +1,6 @@
-#include "RTC_manager.h"
 #include <Arduino.h>
+#include "RTC_manager.h"
 
-// RTC 객체 생성
 RTC_DS3231 rtc;
 
 // RTC 초기화 함수
@@ -16,6 +15,7 @@ void initRTC() {
     }
 }
 
+// RTC 시간이 날아갔을 때 빌드 타임으로 복구
 void resetRTC() {
     DateTime curr_kst = DateTime(F(__DATE__), F(__TIME__));
     DateTime curr_utc = curr_kst - TimeSpan(9 * 3600);

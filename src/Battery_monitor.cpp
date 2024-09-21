@@ -1,5 +1,5 @@
-#include "Battery_monitor.h"
 #include <Arduino.h>
+#include "Battery_monitor.h"
 
 int batteryMeasurements[NUM_MEASUREMENTS] = {0};
 int currentIndex = 0;

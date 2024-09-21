@@ -1,6 +1,7 @@
 #ifndef DEVICE_CONFIG_H
 #define DEVICE_CONFIG_H
 
+#include <Arduino.h>
 #include <cstring>
 
 class DeviceConfig {

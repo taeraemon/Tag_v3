@@ -1,6 +1,7 @@
 #ifndef BLE_MANAGER_H
 #define BLE_MANAGER_H
 
+#include <Arduino.h>
 #include <BLEDevice.h>
 #include <BLEServer.h>
 #include <BLEUtils.h>
@@ -10,7 +11,6 @@
 #define CHARACTERISTIC_UUID_RX "6E400002-B5A3-F393-E0A9-E50E24DCCA9E"
 #define CHARACTERISTIC_UUID_TX "6E400003-B5A3-F393-E0A9-E50E24DCCA9E"
 
-// 함수 선언
 void StartBLE();
 void handleBLEConnectionChanges();
 bool isBLEConnected();
@@ -18,7 +18,6 @@ void sendNotification(const char* message);  // 기본 BLE 알림 전송 함수
 void notifyBatteryStatus(int batteryLevel);  // 배터리 상태 전송
 void notifyWiFiStatus(const char* ssid, int rssi);  // WiFi 상태 전송
 
-// 콜백 클래스 선언
 class MyServerCallbacks : public BLEServerCallbacks {
     void onConnect(BLEServer* pServer);
     void onDisconnect(BLEServer* pServer);

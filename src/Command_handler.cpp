@@ -38,6 +38,7 @@ void processCommand(const std::string &command) {
     }
 }
 
+// 스캔 기능 토글
 void handleScanCommand(const char* cmd) {
     DeviceConfig& config = DeviceConfig::getInstance();
 
@@ -53,22 +54,24 @@ void handleScanCommand(const char* cmd) {
     }
 }
 
+// SSID 변경
 void handleSSIDCommand(const char* cmd) {
     DeviceConfig& config = DeviceConfig::getInstance();
     config.setSSID(&cmd[2]);  // DeviceConfig에서 SSID 설정
-
+    // TODO : RAM, ROM 분기
     writeEEPROM(EEPROM_ADDR_SSID, config.getSSID());
     Serial.print("SSID set to: ");
     Serial.println(config.getSSID());
     StartWiFi();
 }
 
+// BLE Advertise
 void handleConfigCommand(const char* cmd) {
     DeviceConfig& config = DeviceConfig::getInstance();
     int val = atoi(&cmd[2]);
 
     if (cmd[1] == '1') {
-        config.setAdvInterval(val);  // 광고 주기 설정
+        config.setAdvInterval(val);  // Advertise 주기 설정
         Serial.print("Advertising interval set to: ");
         Serial.println(config.getAdvInterval());
     }
@@ -79,16 +82,19 @@ void handleConfigCommand(const char* cmd) {
     }
 }
 
+// Battery Voltage Monitor
 void handleBatteryCommand() {
     Serial.println("Battery monitor requested.");
 }
 
+// RTC Time Handling
 void handleTimeCommand(const char* cmd) {
     int newTime = atoi(&cmd[1]);
     Serial.print("Setting new time to: ");
     Serial.println(newTime);
 }
 
+// Factory Reset
 void handleResetCommand() {
     Serial.println("Device reset requested.");
     resetEEPROM();

@@ -10,7 +10,6 @@
 #define EEPROM_ADDR_INTV 110
 #define EEPROM_ADDR_TXPW 120
 
-// 함수 선언
 bool initEEPROM();
 void writeEEPROM(int addr, const char* data);
 void readEEPROM(int addr, char* data);
