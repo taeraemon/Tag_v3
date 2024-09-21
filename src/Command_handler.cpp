@@ -2,6 +2,7 @@
 #include "Command_handler.h"
 #include "EEPROM_manager.h"
 #include "WiFi_manager.h"
+#include "BLE_manager.h"
 #include "DeviceConfig.h"
 
 void processCommand(const std::string &command) {
@@ -57,12 +58,22 @@ void handleScanCommand(const char* cmd) {
 // SSID 변경
 void handleSSIDCommand(const char* cmd) {
     DeviceConfig& config = DeviceConfig::getInstance();
+
+    // SSID 설정
     config.setSSID(&cmd[2]);  // DeviceConfig에서 SSID 설정
-    // TODO : RAM, ROM 분기
-    writeEEPROM(EEPROM_ADDR_SSID, config.getSSID());
-    Serial.print("SSID set to: ");
-    Serial.println(config.getSSID());
+
+    // RAM 또는 EEPROM에 저장 여부 확인 (cmd[1] 값에 따라 결정)
+    if (cmd[1] == '1') {
+        writeEEPROM(EEPROM_ADDR_SSID, config.getSSID());
+    }
+
+    // BLE advertise 이름 동작 중 변경 (BLE_manager의 함수 호출)
+    updateBLEDeviceName(config.getSSID());
+
+    // WiFi 시작 (SSID 변경 후 재시작 필요)
     StartWiFi();
+    Serial.print("SSID Modified : ");
+    Serial.println(config.getSSID());
 }
 
 // BLE Advertise

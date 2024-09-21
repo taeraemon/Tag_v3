@@ -14,6 +14,7 @@
 void StartBLE();
 void handleBLEConnectionChanges();
 bool isBLEConnected();
+void updateBLEDeviceName(const char* name);
 void sendNotification(const char* message);  // 기본 BLE 알림 전송 함수
 void notifyBatteryStatus(int batteryLevel);  // 배터리 상태 전송
 void notifyWiFiStatus(const char* ssid, int rssi);  // WiFi 상태 전송

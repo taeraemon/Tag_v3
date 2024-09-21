@@ -50,6 +50,13 @@ bool isBLEConnected() {
     return deviceConnected;
 }
 
+// 동작중에 BLE ssid 변경
+void updateBLEDeviceName(const char* name) {
+    esp_ble_gap_set_device_name(name);  // BLE advertise 이름 변경
+    Serial.print("BLE device name updated to: ");
+    Serial.println(name);
+}
+
 // 기본 BLE 알림 전송 함수
 void sendNotification(const char* message) {
     if (deviceConnected) {
@@ -94,5 +101,3 @@ void MyServerCallbacks::onConnect(BLEServer* pServer) {
 void MyServerCallbacks::onDisconnect(BLEServer* pServer) {
     deviceConnected = false;
 }
-
-// TODO : 온라인 SSID 변경 구현
