@@ -5,6 +5,7 @@
 #include "BLE_manager.h"
 #include "DeviceConfig.h"
 #include "RTC_manager.h"
+#include "Battery_monitor.h"
 
 void processCommand(const std::string &command) {
     Serial.print("Received Command: ");
@@ -98,6 +99,10 @@ void handleConfigCommand(const char* cmd) {
 // Battery Voltage Monitor
 void handleBatteryCommand() {
     Serial.println("Battery monitor requested.");
+    
+    // 배터리 상태 주기적 전송
+    int batteryLevel = getAverageBatteryLevel();
+    notifyBatteryStatus(batteryLevel);
 }
 
 // RTC Time Handling

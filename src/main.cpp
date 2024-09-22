@@ -40,10 +40,4 @@ void loop() {
 
     // BLE 연결 상태 처리
     handleBLEConnectionChanges();
-
-    // 배터리 상태 주기적 전송
-    int batteryLevel = getAverageBatteryLevel();
-    notifyBatteryStatus(batteryLevel);
-
-    delay(1000); // 1초 딜레이
 }
