@@ -41,11 +41,11 @@ void resetEEPROM() {
     // WiFi 스캔 설정 (기본값: 활성화)
     writeEEPROM(EEPROM_ADDR_SCAN, "1");
 
-    // Advertise 주기 설정 (기본값: 0)
-    writeEEPROM(EEPROM_ADDR_INTV, "0");
+    // Advertise 주기 설정 (기본값: 3000ms) (100 ~ 10000ms)
+    writeEEPROM(EEPROM_ADDR_INTV, "3000");
 
-    // 최대 송신 전력 설정 (기본값: 80)
-    writeEEPROM(EEPROM_ADDR_TXPW, "80");
+    // 최대 송신 전력 설정 (기본값: 9) (0~9)
+    writeEEPROM(EEPROM_ADDR_TXPW, "");
 }
 
 // EEPROM에서 DeviceConfig 값 로드

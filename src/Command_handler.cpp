@@ -78,21 +78,27 @@ void handleSSIDCommand(const char* cmd) {
     Serial.println(config.getSSID());
 }
 
-// BLE Advertise
+// Advertise Config (Interval, Power)
 void handleConfigCommand(const char* cmd) {
     DeviceConfig& config = DeviceConfig::getInstance();
     int val = atoi(&cmd[2]);
 
+    // Advertise Interval 설정
     if (cmd[1] == '1') {
         config.setAdvInterval(val);  // Advertise 주기 설정
-        
-        Serial.print("Advertising interval set to: ");
-        Serial.println(config.getAdvInterval());
+
+        // WiFi 및 BLE interval 설정 호출
+        setWiFiBeaconInterval(val);
+        setBLEAdvertisingInterval(val);
     }
+    
+    // 송신 전력 설정
     else if (cmd[1] == '2') {
         config.setTransmitPower(val);  // 송신 전력 설정
-        Serial.print("Transmit power set to: ");
-        Serial.println(config.getTransmitPower());
+
+        // WiFi 및 BLE 송신 전력 설정
+        adjustWiFiTransmitPower(val);
+        adjustBLETransmitPower(val);
     }
 }
 

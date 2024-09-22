@@ -2,7 +2,6 @@
 #include "BLE_manager.h"
 #include "Command_handler.h"  // 명령어 처리 모듈
 #include "DeviceConfig.h"
-
 BLEServer  *pServer  = NULL;
 BLEService *pService = NULL;
 BLECharacteristic *pTxCharacteristic;
@@ -55,6 +54,57 @@ void updateBLEDeviceName(const char* name) {
     esp_ble_gap_set_device_name(name);  // BLE advertise 이름 변경
     Serial.print("BLE device name updated to: ");
     Serial.println(name);
+}
+
+// BLE advertise interval 설정 함수
+void setBLEAdvertisingInterval(int interval) {
+    esp_ble_adv_params_t adv_params;
+    adv_params.adv_int_min = interval;
+    adv_params.adv_int_max = interval;  // min과 max를 동일하게 설정하여 고정 간격 설정
+
+    // 설정된 advertise 파라미터를 이용하여 advertise 시작
+    esp_ble_gap_start_advertising(&adv_params);
+
+    Serial.print("BLE advertising interval set to: ");
+    Serial.println(interval);
+}
+
+// 0~9 값을 받아 BLE 송신 전력 설정 함수
+void adjustBLETransmitPower(int level) {
+    esp_power_level_t blePowerLevel;
+
+    switch (level) {
+        case 9:
+            blePowerLevel = ESP_PWR_LVL_P9;  // 9 dBm
+            break;
+        case 8:
+            blePowerLevel = ESP_PWR_LVL_P6;  // 6 dBm
+            break;
+        case 7:
+            blePowerLevel = ESP_PWR_LVL_P3;  // 3 dBm
+            break;
+        case 6:
+            blePowerLevel = ESP_PWR_LVL_N0;  // 0 dBm
+            break;
+        case 5:
+            blePowerLevel = ESP_PWR_LVL_N3;  // -3 dBm
+            break;
+        case 4:
+            blePowerLevel = ESP_PWR_LVL_N6;  // -6 dBm
+            break;
+        case 3:
+            blePowerLevel = ESP_PWR_LVL_N9;  // -9 dBm
+            break;
+        default:
+            blePowerLevel = ESP_PWR_LVL_N12;  // -12 dBm (default)
+            break;
+    }
+
+    esp_ble_tx_power_set(ESP_BLE_PWR_TYPE_ADV, blePowerLevel);  // Advertise 전력 설정
+    esp_ble_tx_power_set(ESP_BLE_PWR_TYPE_SCAN, blePowerLevel);  // 스캔 전력 설정
+
+    Serial.print("BLE transmit power adjusted to: ");
+    Serial.println(level);
 }
 
 // 기본 BLE 알림 전송 함수
