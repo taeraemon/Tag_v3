@@ -4,6 +4,7 @@
 #include "WiFi_manager.h"
 #include "BLE_manager.h"
 #include "DeviceConfig.h"
+#include "RTC_manager.h"
 
 void processCommand(const std::string &command) {
     Serial.print("Received Command: ");
@@ -83,6 +84,7 @@ void handleConfigCommand(const char* cmd) {
 
     if (cmd[1] == '1') {
         config.setAdvInterval(val);  // Advertise 주기 설정
+        
         Serial.print("Advertising interval set to: ");
         Serial.println(config.getAdvInterval());
     }
@@ -101,6 +103,7 @@ void handleBatteryCommand() {
 // RTC Time Handling
 void handleTimeCommand(const char* cmd) {
     int newTime = atoi(&cmd[1]);
+    setTime(newTime);
     Serial.print("Setting new time to: ");
     Serial.println(newTime);
 }
