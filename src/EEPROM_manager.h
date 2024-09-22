@@ -4,11 +4,18 @@
 #include <Arduino.h>
 
 #define EEPROM_SIZE      300
+
 #define EEPROM_ADDR_SSID 0
 #define EEPROM_ADDR_PSWD 50
 #define EEPROM_ADDR_SCAN 100
 #define EEPROM_ADDR_INTV 110
 #define EEPROM_ADDR_TXPW 120
+
+#define EEPROM_DFLT_SSID "default"
+#define EEPROM_DFLT_PSWD "00000000"
+#define EEPROM_DFLT_SCAN "1"
+#define EEPROM_DFLT_INTV "3000"
+#define EEPROM_DFLT_TXPW "9"
 
 bool initEEPROM();
 void writeEEPROM(int addr, const char* data);

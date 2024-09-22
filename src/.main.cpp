@@ -1,11 +1,7 @@
 
 /*
 1. EEPROM 초기화
-ssid : default
-pswd : 00000000
-scan : on (1)
-interval(scan) : 5000
-transmit power : 80
+EEPROM_DFLT에 정의된 값으로 초기화
 
 2. RTC 초기화
 컴파일 타임의 UTC를 rtc에 저장

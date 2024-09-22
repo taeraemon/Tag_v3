@@ -35,17 +35,17 @@ void readEEPROM(int addr, char* data) {
 // EEPROM 리셋 함수
 void resetEEPROM() {
     // 기본 SSID와 비밀번호 설정
-    writeEEPROM(EEPROM_ADDR_SSID, "default");
-    writeEEPROM(EEPROM_ADDR_PSWD, "00000000");
+    writeEEPROM(EEPROM_ADDR_SSID, EEPROM_DFLT_SSID);
+    writeEEPROM(EEPROM_ADDR_PSWD, EEPROM_DFLT_PSWD);
 
-    // WiFi 스캔 설정 (기본값: 활성화)
-    writeEEPROM(EEPROM_ADDR_SCAN, "1");
+    // WiFi 스캔 설정
+    writeEEPROM(EEPROM_ADDR_SCAN, EEPROM_DFLT_SCAN);
 
-    // Advertise 주기 설정 (기본값: 3000ms) (100 ~ 10000ms)
-    writeEEPROM(EEPROM_ADDR_INTV, "3000");
+    // Advertise 주기 설정
+    writeEEPROM(EEPROM_ADDR_INTV, EEPROM_DFLT_INTV);
 
-    // 최대 송신 전력 설정 (기본값: 9) (0~9)
-    writeEEPROM(EEPROM_ADDR_TXPW, "");
+    // 최대 송신 전력 설정
+    writeEEPROM(EEPROM_ADDR_TXPW, EEPROM_DFLT_TXPW);
 }
 
 // EEPROM에서 DeviceConfig 값 로드
