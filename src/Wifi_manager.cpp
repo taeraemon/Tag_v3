@@ -30,7 +30,8 @@ void ScanAndSend() {
     } else {
         Serial.printf("%d networks found:\n", n);
         for (int i = 0; i < n; i++) {
-            const char* foundSSID = WiFi.SSID(i).c_str();
+            String foundSSID_str = WiFi.SSID(i);
+            const char* foundSSID = foundSSID_str.c_str();
             int rssi = WiFi.RSSI(i);
             notifyWiFiStatus(foundSSID, rssi);
             delay(10);
