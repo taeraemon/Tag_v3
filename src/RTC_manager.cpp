@@ -17,6 +17,7 @@ void initRTC() {
 
 // RTC 시간이 날아갔을 때 빌드 타임으로 복구
 void resetRTC() {
+    Serial.println("RTC reset, Time will Set to firmware build time");
     DateTime curr_kst = DateTime(F(__DATE__), F(__TIME__));
     DateTime curr_utc = curr_kst - TimeSpan(9 * 3600);
 
