@@ -9,6 +9,7 @@
 #include <esp_wifi.h>
 
 struct WiFiInfo {
+    char ssid[32];
     uint8_t mac[6];
     int8_t rssi;
 };

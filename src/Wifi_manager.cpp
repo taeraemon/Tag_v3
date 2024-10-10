@@ -4,7 +4,7 @@
 #include "DeviceConfig.h"
 
 // WiFi 데이터 저장소
-#define MAX_WIFI_COUNT 20
+#define MAX_WIFI_COUNT 50
 WiFiInfo wifiData[MAX_WIFI_COUNT];
 int wifiCount = 0;
 
@@ -19,7 +19,6 @@ void clearWiFiData() {
     memset(wifiData, 0, sizeof(wifiData));
     wifiCount = 0;
 }
-
 
 // Wifi 인스턴스 시작. 재호출 시 ssid 업데이트 되어 시작
 void StartWiFi() {
@@ -37,22 +36,27 @@ void StartWiFi() {
     Serial.println(ssid);
 }
 
-// 주변 AP 스캔을 시작, BLE로 전송
+// 주변 AP 스캔을 시작, 결과를 저장
 void ScanAndSend() {
-    digitalWrite(LED_BUILTIN, HIGH);
-    int n = WiFi.scanNetworks();
-    digitalWrite(LED_BUILTIN, LOW);
+    wifiCount = WiFi.scanNetworks();  // 네트워크 스캔 시작
 
-    if (n == 0) {
+    if (wifiCount == 0) {
         Serial.println("No networks found.");
-    } else {
-        Serial.printf("%d networks found:\n", n);
-        for (int i = 0; i < n; i++) {
-            String foundSSID_str = WiFi.SSID(i);
-            const char* foundSSID = foundSSID_str.c_str();
-            int rssi = WiFi.RSSI(i);
-            notifyWiFiStatus(foundSSID, rssi);
-            delay(10);
+    }
+    else {
+        Serial.printf("%d networks found:\n", wifiCount);
+
+        // 스캔된 네트워크 정보를 wifiData 배열에 저장
+        for (int i = 0; i < wifiCount && i < MAX_WIFI_COUNT; i++) {
+            String ssid_str = WiFi.SSID(i);
+            strncpy(wifiData[i].ssid, ssid_str.c_str(), sizeof(wifiData[i].ssid) - 1);
+            wifiData[i].ssid[sizeof(wifiData[i].ssid) - 1] = '\0';  // null terminate
+
+            // MAC 주소 저장
+            uint8_t* macAddr = WiFi.BSSID(i);  // MAC 주소 가져오기
+            memcpy(wifiData[i].mac, macAddr, 6);  // 6바이트 MAC 주소 복사
+
+            wifiData[i].rssi = WiFi.RSSI(i);
         }
     }
 }

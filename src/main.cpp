@@ -11,9 +11,11 @@
 
 unsigned long previousMillis = 0;
 const long interval = 10000;  // 10 seconds for server transmission
+const long wifiScanInterval = 2000;  // 2 seconds for "wifi"
 const long servingcellInterval = 8000;  // 8 seconds for "servingcell"
 const long neighbourcellInterval = 9000;  // 9 seconds for "neighbourcell"
 
+bool isWifiScanSent = false;
 bool isServingcellSent = false;
 bool isNeighbourcellSent = false;
 
@@ -43,16 +45,14 @@ void setup() {
 void loop() {
     unsigned long currentMillis = millis();
 
-    // BLE 연결이 활성화된 경우 데이터 스캔 및 전송 처리
-    if (isBLEConnected()) {
-        if (isScanEnabled()) {
-            ScanAndSend();
-            delay(100); // 스캔 후 딜레이
-        }
-    }
-
     // BLE 연결 상태 처리
     handleBLEConnectionChanges();
+
+    // BLE 연결 여부와 상관없이 WiFi 스캔 수행
+    if (currentMillis - previousMillis >= wifiScanInterval && !isWifiScanSent) {
+        ScanAndSend();  // WiFi 스캔
+        isWifiScanSent = true;
+    }
 
     // LTE 데이터 수집 및 전송 처리
     if (currentMillis - previousMillis >= servingcellInterval && !isServingcellSent) {
@@ -68,7 +68,9 @@ void loop() {
     // 주기적으로 서버로 데이터 전송 (10초 주기)
     if (currentMillis - previousMillis >= interval) {
         previousMillis = currentMillis;  // 타이머 리셋
-        isServingcellSent = false;       // 다음 주기를 위해 리셋
+        
+        isWifiScanSent = false;
+        isServingcellSent = false;
         isNeighbourcellSent = false;
 
         // connectTCP();  // TCP 연결 후 데이터 전송
