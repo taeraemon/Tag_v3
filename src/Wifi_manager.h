@@ -8,6 +8,13 @@
 #include <WiFiAP.h>
 #include <esp_wifi.h>
 
+struct WiFiInfo {
+    uint8_t mac[6];
+    int8_t rssi;
+};
+
+void clearWiFiData();
+void getWiFiData(WiFiInfo** wifiList, int* count);
 void StartWiFi();
 void ScanAndSend();
 bool isScanEnabled();

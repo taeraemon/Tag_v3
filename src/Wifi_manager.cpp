@@ -3,6 +3,24 @@
 #include "BLE_manager.h"
 #include "DeviceConfig.h"
 
+// WiFi 데이터 저장소
+#define MAX_WIFI_COUNT 20
+WiFiInfo wifiData[MAX_WIFI_COUNT];
+int wifiCount = 0;
+
+// WiFi 데이터 반환 함수
+void getWiFiData(WiFiInfo** wifiList, int* count) {
+    *wifiList = wifiData;
+    *count = wifiCount;
+}
+
+// WiFi 데이터 초기화 함수
+void clearWiFiData() {
+    memset(wifiData, 0, sizeof(wifiData));
+    wifiCount = 0;
+}
+
+
 // Wifi 인스턴스 시작. 재호출 시 ssid 업데이트 되어 시작
 void StartWiFi() {
     // DeviceConfig에서 SSID와 비밀번호 가져오기

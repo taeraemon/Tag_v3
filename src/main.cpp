@@ -6,7 +6,8 @@
 #include "EEPROM_manager.h"
 #include "Command_handler.h"
 #include "DeviceConfig.h"
-#include "LTEmanager.h"
+#include "LTE_manager.h"
+#include "Transmission_manager.h"
 
 unsigned long previousMillis = 0;
 const long interval = 10000;  // 10 seconds for server transmission
@@ -55,12 +56,12 @@ void loop() {
 
     // LTE 데이터 수집 및 전송 처리
     if (currentMillis - previousMillis >= servingcellInterval && !isServingcellSent) {
-        LTEmanager_sendATCommand("AT+QENG=\"servingcell\"\r\n");  // Serving cell 정보 수집
+        LTE_manager_sendATCommand("AT+QENG=\"servingcell\"\r\n");  // Serving cell 정보 수집
         isServingcellSent = true;
     }
 
     if (currentMillis - previousMillis >= neighbourcellInterval && !isNeighbourcellSent) {
-        LTEmanager_sendATCommand("AT+QENG=\"neighbourcell\"\r\n");  // Neighbour cell 정보 수집
+        LTE_manager_sendATCommand("AT+QENG=\"neighbourcell\"\r\n");  // Neighbour cell 정보 수집
         isNeighbourcellSent = true;
     }
 
@@ -71,9 +72,10 @@ void loop() {
         isNeighbourcellSent = false;
 
         // connectTCP();  // TCP 연결 후 데이터 전송
-        Serial.println("Try to Send");
+        // Serial.println("Try to Send\n\n");
+        transmitData();  // 데이터 전송 함수 호출
     }
 
     // 시리얼 버퍼 읽기 및 처리
-    LTEmanager_readSerialBuffer();
+    LTE_manager_readSerialBuffer();
 }
