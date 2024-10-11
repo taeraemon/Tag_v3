@@ -11,9 +11,9 @@
 
 unsigned long previousMillis = 0;
 const long interval = 10000;  // 10 seconds for server transmission
-const long wifiScanInterval = 2000;  // 2 seconds for "wifi"
-const long servingcellInterval = 8000;  // 8 seconds for "servingcell"
-const long neighbourcellInterval = 9000;  // 9 seconds for "neighbourcell"
+const long wifiScanInterval = 4000;  // 2 seconds for WiFi scan
+const long servingcellInterval = 8000;  // 8 seconds for serving cell data collection
+const long neighbourcellInterval = 9000;  // 9 seconds for neighbour cell data collection
 
 bool isWifiScanSent = false;
 bool isServingcellSent = false;
@@ -73,9 +73,8 @@ void loop() {
         isServingcellSent = false;
         isNeighbourcellSent = false;
 
-        // connectTCP();  // TCP 연결 후 데이터 전송
-        // Serial.println("Try to Send\n\n");
-        transmitData();  // 데이터 전송 함수 호출
+        // 주기적으로 TCP 연결하여 데이터 전송
+        transmitData();  // 데이터를 패킷화하여 서버로 전송
     }
 
     // 시리얼 버퍼 읽기 및 처리

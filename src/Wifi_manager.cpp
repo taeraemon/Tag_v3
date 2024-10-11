@@ -4,7 +4,7 @@
 #include "DeviceConfig.h"
 
 // WiFi 데이터 저장소
-#define MAX_WIFI_COUNT 50
+#define MAX_WIFI_COUNT 500
 WiFiInfo wifiData[MAX_WIFI_COUNT];
 int wifiCount = 0;
 

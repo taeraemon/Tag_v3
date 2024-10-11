@@ -53,43 +53,10 @@ void transmitData() {
         packet[packetLength++] = wifiData[i].rssi;
     }
 
-    // 데이터 확인용 출력
-    Serial.println("=== LTE Serving Cell Data ===");
-    Serial.print("CID: 0x"); Serial.println(lteData.cid, HEX);
-    Serial.print("PCI: "); Serial.println(lteData.pci);
-    Serial.print("Band: "); Serial.println(lteData.band);
-    Serial.print("MNC: "); Serial.println(lteData.mnc);
-    Serial.print("RSRP: "); Serial.println(lteData.rsrp);
-    Serial.print("RSRQ: "); Serial.println(lteData.rsrq);
-
-    Serial.println("=== LTE Neighbour Cells ===");
-    for (int i = 0; i < neighbourCount; i++) {
-        Serial.print(lteNeighbours[i].isIntra ? "Intra" : "Inter");
-        Serial.print(" Neighbour Cell CID: 0x"); Serial.println(lteNeighbours[i].cid, HEX);
-        Serial.print("PCI: "); Serial.println(lteNeighbours[i].pci);
-        Serial.print("RSRP: "); Serial.println(lteNeighbours[i].rsrp);
-        Serial.print("RSRQ: "); Serial.println(lteNeighbours[i].rsrq);
-    }
-
-    Serial.println("=== WiFi Data ===");
-    for (int i = 0; i < wifiCount; i++) {
-        Serial.print("MAC: ");
-        for (int j = 0; j < 6; j++) {
-            Serial.print(wifiData[i].mac[j], HEX);
-            if (j < 5) Serial.print(":");
-        }
-        Serial.print(" RSSI: "); Serial.println(wifiData[i].rssi);
-    }
-
-    // TCP 연결 및 전송 주석 처리
-    /*
-    if (connectTCP()) {
-        sendPacket(packet, packetLength);
-        disconnectTCP();
-    } else {
-        Serial.println("TCP 연결 실패");
-    }
-    */
+    // TCP 연결 및 전송
+    connectTCP();  // 소켓을 열고
+    sendPacket(packet, packetLength);  // 패킷 전송
+    disconnectTCP();  // 소켓을 닫음
 
     // 데이터 초기화
     clearLTEData();
@@ -99,46 +66,34 @@ void transmitData() {
 
 // TCP 연결 함수
 bool connectTCP() {
-    Serial2.print("AT+QIOPEN=1,0,\"TCP\",\"");
-    Serial2.print(SERVER_IP);
-    Serial2.print("\",");
-    Serial2.print(SERVER_PORT);
-    Serial2.println(",0,1");
-    delay(2000);  // 연결 대기
-
-    // 연결 상태 확인
-    Serial2.println("AT+QISTATE=0,0");  // 소켓 0의 상태 확인
-    delay(1000);
-
-    // 응답 확인
-    if (LTE_manager_readSerialBufferContains("CONNECT OK")) {
-        Serial.println("TCP 연결 성공");
-        return true;
-    } else {
-        Serial.println("TCP 연결 실패");
-        return false;
-    }
+    Serial2.write("AT+QIOPEN=1,0,\"TCP\",\"");
+    Serial2.write(SERVER_IP);  // Transmission_manager.h에서 정의된 SERVER_IP 사용
+    Serial2.write("\",");
+    Serial2.print(SERVER_PORT);  // Transmission_manager.h에서 정의된 SERVER_PORT 사용
+    Serial2.write(",0,0\r\n");
+    delay(1000);  // 첫 번째 명령 후 대기
+    return true;  // 연결 상태는 확인하지 않고 항상 true 반환
 }
 
 // 데이터 전송 함수
 void sendPacket(uint8_t* packet, int length) {
-    // 데이터 전송 명령어
-    Serial2.print("AT+QISEND=0,");
-    Serial2.println(length);
-    delay(500);  // 전송 준비 대기
+    char sendCommand[32];  // AT+QISEND 명령을 저장할 버퍼
+    sprintf(sendCommand, "AT+QISEND=0,%d\r\n", length);  // 문자열 생성
 
-    // 패킷 전송
-    Serial2.write(packet, length);
+    Serial2.write(sendCommand);  // 한번에 write
+    delay(500);  // 명령 전송 후 대기
 
-    // 데이터 전송 완료를 위해 Ctrl+Z (0x1A) 전송
-    Serial2.write(0x1A);
-
-    Serial.println("데이터 전송 완료");
+    Serial2.write(packet, length);  // 실제 데이터 전송
+    Serial.println(length);  // 전송한 데이터 길이를 출력
+    Serial2.write("\r\n");
+    delay(500);
+    
+    Serial.println("Data Send Complete");
 }
 
 // TCP 연결 해제 함수
 void disconnectTCP() {
-    Serial2.println("AT+QICLOSE=0");
-    delay(500);
-    Serial.println("TCP 연결 해제");
+    Serial2.write("AT+QICLOSE=0\r\n");
+    delay(500);  // 세 번째 명령 후 대기
+    Serial.println("TCP close");
 }

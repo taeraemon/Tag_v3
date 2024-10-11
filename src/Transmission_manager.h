@@ -4,7 +4,8 @@
 #include <Arduino.h>
 
 #define SERVER_IP "111.118.38.151"
-#define SERVER_PORT 55555
+#define SERVER_PORT 55552
+// TODO : Add EEPROM setup
 
 void transmitData();
 bool connectTCP();         // TCP 연결 함수
