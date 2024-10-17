@@ -46,6 +46,10 @@ void resetEEPROM() {
 
     // 최대 송신 전력 설정
     writeEEPROM(EEPROM_ADDR_TXPW, EEPROM_DFLT_TXPW);
+
+    // 서버 주소 및 포트 설정 추가
+    writeEEPROM(EEPROM_ADDR_SEVR, EEPROM_DFLT_SEVR);  // 서버 주소 설정
+    writeEEPROM(EEPROM_ADDR_PORT, EEPROM_DFLT_PORT);  // 포트 번호 설정
 }
 
 // EEPROM에서 DeviceConfig 값 로드

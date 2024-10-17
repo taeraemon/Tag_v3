@@ -10,9 +10,8 @@
 #define EEPROM_ADDR_SCAN 100
 #define EEPROM_ADDR_INTV 110
 #define EEPROM_ADDR_TXPW 120
-#define EEPROM_ADDR_SEVR 
-#define EEPROM_ADDR_PORT 
-#define EEPROM_ADDR_UUID 
+#define EEPROM_ADDR_SEVR 130
+#define EEPROM_ADDR_PORT 280
 
 #define EEPROM_DFLT_SSID "default"
 #define EEPROM_DFLT_PSWD "00000000"
@@ -21,7 +20,6 @@
 #define EEPROM_DFLT_TXPW "9"
 #define EEPROM_DFLT_SEVR "111.118.38.151"
 #define EEPROM_DFLT_PORT "55555"
-#define EEPROM_DFLT_UUID "1234"
 
 bool initEEPROM();
 void writeEEPROM(int addr, const char* data);
