@@ -10,10 +10,6 @@
 #include "Transmission_manager.h"
 
 unsigned long previousMillis = 0;
-const long interval = 30000;  // min 10 sec
-const long wifiScanInterval = interval - 6000;
-const long servingcellInterval = interval - 2000;
-const long neighbourcellInterval = interval - 1000;
 
 bool isWifiScanSent = false;
 bool isServingcellSent = false;
@@ -52,7 +48,7 @@ void loop() {
     handleBLEConnectionChanges();
 
     // BLE 연결 여부와 상관없이 WiFi 스캔 수행 (scan_toggle 상태에 따라)
-    if (currentMillis - previousMillis >= wifiScanInterval && !isWifiScanSent) {
+    if (currentMillis - previousMillis >= (config.getScanInterval() - 6000) && !isWifiScanSent) {
         if (config.getScanToggle() == 1) {  // scan_toggle 상태가 1일 때만 스캔
             ScanAndSend();  // WiFi 스캔
         }
@@ -60,18 +56,18 @@ void loop() {
     }
 
     // LTE 데이터 수집 및 전송 처리
-    if (currentMillis - previousMillis >= servingcellInterval && !isServingcellSent) {
+    if (currentMillis - previousMillis >= (config.getScanInterval() - 2000) && !isServingcellSent) {
         LTE_manager_sendATCommand("AT+QENG=\"servingcell\"\r\n");  // Serving cell 정보 수집
         isServingcellSent = true;
     }
 
-    if (currentMillis - previousMillis >= neighbourcellInterval && !isNeighbourcellSent) {
+    if (currentMillis - previousMillis >= (config.getScanInterval() - 1000) && !isNeighbourcellSent) {
         LTE_manager_sendATCommand("AT+QENG=\"neighbourcell\"\r\n");  // Neighbour cell 정보 수집
         isNeighbourcellSent = true;
     }
 
     // 주기적으로 서버로 데이터 전송
-    if (currentMillis - previousMillis >= interval) {
+    if (currentMillis - previousMillis >= config.getScanInterval()) {
         previousMillis = currentMillis;  // 타이머 리셋
         
         isWifiScanSent = false;

@@ -78,18 +78,19 @@ void handleSSIDCommand(const char* cmd) {
     Serial.println(config.getSSID());
 }
 
-// Advertise Config (Interval, Power)
+// Scan or Advertise Config (Interval, Power)
 void handleConfigCommand(const char* cmd) {
     DeviceConfig& config = DeviceConfig::getInstance();
     int val = atoi(&cmd[2]);
 
-    // Advertise Interval 설정
+    // Scan Interval 설정
     if (cmd[1] == '1') {
         config.setScanInterval(val);  // Advertise 주기 설정
-
-        // WiFi 및 BLE interval 설정 호출
-        setWiFiBeaconInterval(val);
-        setBLEAdvertisingInterval(val);
+        
+        // EEPROM에 저장
+        char buffer[10];
+        itoa(val, buffer, 10);
+        writeEEPROM(EEPROM_ADDR_INTV, buffer);
     }
     
     // 송신 전력 설정
