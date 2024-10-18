@@ -22,6 +22,9 @@ void clearWiFiData() {
 
 // Wifi 인스턴스 시작. 재호출 시 ssid 업데이트 되어 시작
 void StartWiFi() {
+    // 상태 확인용 LED 설정
+    pinMode(PIN_WIFI_LED, OUTPUT);
+
     // DeviceConfig에서 SSID와 비밀번호 가져오기
     DeviceConfig& config = DeviceConfig::getInstance();
     const char* ssid = config.getSSID();
@@ -38,6 +41,8 @@ void StartWiFi() {
 
 // 주변 AP 스캔을 시작, 결과를 저장
 void ScanAndSend() {
+    digitalWrite(PIN_WIFI_LED, HIGH);
+    
     wifiCount = WiFi.scanNetworks();  // 네트워크 스캔 시작
 
     if (wifiCount == 0) {
@@ -59,6 +64,8 @@ void ScanAndSend() {
             wifiData[i].rssi = WiFi.RSSI(i);
         }
     }
+
+    digitalWrite(PIN_WIFI_LED, LOW);
 }
 
 // 스캔 토글 확인

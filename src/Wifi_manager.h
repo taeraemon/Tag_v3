@@ -8,6 +8,8 @@
 #include <WiFiAP.h>
 #include <esp_wifi.h>
 
+#define PIN_WIFI_LED 32
+
 struct WiFiInfo {
     char ssid[32];
     uint8_t mac[6];
