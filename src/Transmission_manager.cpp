@@ -166,28 +166,28 @@ void transmitDataHTTP() {
 
     // // AT 명령어 구성
     Serial.println("AT+QHTTPCFG=\"contextid\",1");
-    delay(1000);
+    delay(250);
 
     Serial2.print("AT+QHTTPURL=");
     Serial2.print(strlen(serverURL));
     Serial2.println(",30");  // URL 입력 대기 시간
-    delay(1000);
+    delay(500);
 
     Serial2.println(serverURL);    // URL 전송
-    delay(1000);
+    delay(500);
 
     // 패킷 전송 명령어
     Serial2.print("AT+QHTTPPOST=");
     Serial2.print(strlen(postData));
     Serial2.println(",30");  // 데이터 전송 대기 시간
-    delay(1000);
+    delay(500);
 
     Serial2.println(postData);  // 패킷 데이터 전송
-    delay(1000);
+    delay(500);
 
     // HTTP 전송 완료 명령어
     Serial2.println("AT+QHTTPSTOP");
-    delay(1000);
+    delay(250);
 
 
 
