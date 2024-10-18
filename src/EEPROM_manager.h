@@ -16,9 +16,9 @@
 #define EEPROM_DFLT_SSID "default"
 #define EEPROM_DFLT_PSWD "00000000"
 #define EEPROM_DFLT_SCAN "1"
-#define EEPROM_DFLT_INTV "10000"
+#define EEPROM_DFLT_INTV "30000"
 #define EEPROM_DFLT_TXPW "9"
-#define EEPROM_DFLT_SEVR "111.118.38.151"
+#define EEPROM_DFLT_SEVR "http://111.118.38.151:55000/receive"
 #define EEPROM_DFLT_PORT "55552"
 
 bool initEEPROM();

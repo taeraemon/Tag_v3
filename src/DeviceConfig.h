@@ -77,10 +77,10 @@ public:
     }
 
 private:
-    DeviceConfig() : scan_toggle(1), scan_interval(100), transmit_power(80), server_port(55552) {
-        strcpy(ssid, "default_ssid");
-        strcpy(pswd, "default_pswd");
-        strcpy(server_ip, "111.118.38.151");
+    DeviceConfig() : scan_toggle(1), scan_interval(30000), transmit_power(9), server_port(55552) {
+        strcpy(ssid, "default");
+        strcpy(pswd, "00000000");
+        strcpy(server_ip, "http://111.118.38.151:55000/receive");
     }
 
     // 복사 생성자 금지
