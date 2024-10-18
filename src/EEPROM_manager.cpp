@@ -74,7 +74,7 @@ void loadDeviceConfigFromEEPROM() {
     // Scan 주기 설정 읽기
     char scan_interval[10];
     readEEPROM(EEPROM_ADDR_INTV, scan_interval);
-    config.setAdvInterval(atoi(scan_interval));
+    config.setScanInterval(atoi(scan_interval));
 
     // 최대 송신 전력 읽기
     char transmit_power[10];

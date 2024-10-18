@@ -85,7 +85,7 @@ void handleConfigCommand(const char* cmd) {
 
     // Advertise Interval 설정
     if (cmd[1] == '1') {
-        config.setAdvInterval(val);  // Advertise 주기 설정
+        config.setScanInterval(val);  // Advertise 주기 설정
 
         // WiFi 및 BLE interval 설정 호출
         setWiFiBeaconInterval(val);

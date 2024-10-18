@@ -45,10 +45,10 @@ public:
     }
 
     // getter/setter for scan_interval
-    void setAdvInterval(int interval) {
+    void setScanInterval(int interval) {
         scan_interval = interval;
     }
-    int getAdvInterval() {
+    int getScanInterval() {
         return scan_interval;
     }
 
