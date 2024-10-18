@@ -76,7 +76,7 @@ void loop() {
         isNeighbourcellSent = false;
 
         // 주기적으로 TCP 연결하여 데이터 전송
-        transmitData();  // 데이터를 패킷화하여 서버로 전송
+        transmitDataHTTP();  // 데이터를 패킷화하여 서버로 전송
     }
 
     if (currentMillis - previousMillis_bat >= 1000) {
