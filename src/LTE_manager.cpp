@@ -3,13 +3,13 @@
 #include "DeviceConfig.h"
 
 // 최대 인접 셀 수 설정
-#define MAX_NEIGHBOUR_CELLS 100
+#define MAX_NEIGHBOUR_CELLS 50
 
 LTEInfo lteServingCell;  // LTE Serving Cell 정보 저장
 LTENeighbourCellInfo lteNeighbourCells[MAX_NEIGHBOUR_CELLS];  // LTE 인접 셀 배열
 int neighbourCellCount = 0;  // 인접 셀의 개수
 
-char buffer[4096];  // Serial buffer
+char buffer[2048];  // Serial buffer
 int bufferIndex = 0;
 
 

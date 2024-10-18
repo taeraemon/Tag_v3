@@ -21,7 +21,7 @@ void transmitData() {
     getWiFiData(&wifiData, &wifiCount);  // WiFi_manager에서 제공하는 함수
 
     // 패킷화
-    uint8_t packet[4096];  // 버퍼 크기 설정
+    uint8_t packet[2048];  // 버퍼 크기 설정
     int packetLength = 0;
 
     // 1. 수집 시간 (UnixTime, 4바이트)
@@ -153,7 +153,7 @@ void transmitDataHTTP() {
     data[length] = '\0';    // 널문자 추가
 
     // HTTP POST 요청할 패킷 만들기
-    char postData[4096];
+    char postData[2048];
     sprintf(postData, "tag=%s&%s", tag, data);
 
     Serial.println(postData);
