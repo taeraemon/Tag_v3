@@ -31,7 +31,7 @@ void transmitData() {
     packet[packetLength++] = unixTime & 0xFF;
 
     // 2. 총 바이트 수 (LTE 신호와 WiFi 신호의 총 바이트 수)
-    uint16_t totalBytes = (11 * (1 + neighbourCount)) + (7 * wifiCount);  // LTE 1개 신호 + 인접 셀, WiFi 신호 수
+    uint16_t totalBytes = 2 + (11 * (1 + neighbourCount)) + (7 * wifiCount);  // LTE 1개 신호 + 인접 셀, WiFi 신호 수
     packet[packetLength++] = (totalBytes >> 8) & 0xFF;
     packet[packetLength++] = totalBytes & 0xFF;
 
@@ -61,7 +61,7 @@ void transmitData() {
         packet[packetLength++] = lteNeighbours[i].pci & 0xFF;           // PCI 하위 바이트
         packet[packetLength++] = (lteNeighbours[i].band >> 8) & 0xFF;   // Band 상위 바이트 (2바이트 처리)
         packet[packetLength++] = lteNeighbours[i].band & 0xFF;          // Band 하위 바이트
-        packet[packetLength++] = lteData.mnc;                           // MNC
+        packet[packetLength++] = lteNeighbours[i].mnc;                  // MNC
         packet[packetLength++] = lteNeighbours[i].rsrp;                 // RSRP
         packet[packetLength++] = lteNeighbours[i].rsrq;                 // RSRQ
     }
