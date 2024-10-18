@@ -82,7 +82,7 @@ void loadDeviceConfigFromEEPROM() {
     config.setTransmitPower(atoi(transmit_power));
 
     // 서버 IP 읽기
-    char server_ip[100];
+    char server_ip[150];
     readEEPROM(EEPROM_ADDR_SEVR, server_ip);
     config.setServerIP(server_ip);
 

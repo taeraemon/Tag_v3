@@ -21,7 +21,7 @@ void transmitData() {
     getWiFiData(&wifiData, &wifiCount);  // WiFi_manager에서 제공하는 함수
 
     // 패킷화
-    uint8_t packet[1024];  // 버퍼 크기 설정
+    uint8_t packet[4096];  // 버퍼 크기 설정
     int packetLength = 0;
 
     // 1. 수집 시간 (UnixTime, 4바이트)
@@ -109,7 +109,7 @@ void transmitDataHTTP() {
     const char* tag = config.getSSID();  // getSSID()로 SSID 가져오기
 
     // 2. HTTP 데이터 문자열 준비
-    char data[2048];  // 전송할 데이터 버퍼
+    char data[4096];  // 전송할 데이터 버퍼
     int length = 0;
 
     // 3. 수집 시간 추가 (UnixTime)

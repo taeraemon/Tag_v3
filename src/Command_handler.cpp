@@ -12,7 +12,7 @@ void processCommand(const std::string &command) {
     Serial.println(command.c_str());
 
     if (command.length() > 0) {
-        char cmd[100] = {0};
+        char cmd[200] = {0};
         strcpy(cmd, command.c_str());
 
         switch (cmd[0]) {
