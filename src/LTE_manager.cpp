@@ -60,7 +60,6 @@ void getLTENeighbourCells(LTENeighbourCellInfo** neighbours, int* count) {
     *count = neighbourCellCount;
 }
 
-
 int endsWithOK() {
     const char *okResponse = "OK\r\n";
     int len = bufferIndex;
@@ -78,33 +77,33 @@ void LTE_manager_decodePacket() {
     if (strstr(buffer, "+QENG: \"servingcell\"")) {
         // 문자열을 쉼표로 나눠서 처리
         char* token = strtok(buffer, ",");
-        
+
         // 불필요한 필드 건너뜀 (state, LTE, is_tdd)
         token = strtok(NULL, ",");  // state
         token = strtok(NULL, ",");  // LTE
         token = strtok(NULL, ",");  // is_tdd
-        
+
         // MCC 건너뜀
         token = strtok(NULL, ",");  // mcc
 
-        // MNC 추출 (1 byte)
+        // MNC 추출 (2자리 혹은 3자리)
         token = strtok(NULL, ",");
         lteServingCell.mnc = (uint8_t)atoi(token);
 
         // CID 추출 (Cell ID, 4 byte, 16진수로 변환)
         token = strtok(NULL, ",");
-        lteServingCell.cid = (uint32_t)strtoul(token, NULL, 16);
+        lteServingCell.cid = (uint32_t)strtoul(token, NULL, 16);  // 16진수로 변환
 
         // PCI 추출 (2 byte)
         token = strtok(NULL, ",");
         lteServingCell.pci = (uint16_t)atoi(token);
 
-        // Freq Band Indicator (BAND, 2 byte)
+        // EARFCN 추출 및 LTE Serving Cell의 band로 저장
         token = strtok(NULL, ",");
-        lteServingCell.band = (uint16_t)atoi(token);
+        lteServingCell.band = (uint16_t)atoi(token);  // EARFCN 값을 band에 저장
 
-        // EARFCN (주파수) 건너뜀
-        token = strtok(NULL, ",");  // earfcn
+        // Freq Band Indicator 건너뜀 (이 정보는 사용하지 않음)
+        token = strtok(NULL, ",");
 
         // UL bandwidth 건너뜀
         token = strtok(NULL, ",");  // ul_bandwidth
@@ -122,6 +121,8 @@ void LTE_manager_decodePacket() {
         // RSRQ 추출 (1 byte)
         token = strtok(NULL, ",");
         lteServingCell.rsrq = (int8_t)atoi(token);
+
+        // 추가 필드가 있다면 필요에 따라 추출
     }
 
     // 인접 셀 처리
@@ -132,22 +133,26 @@ void LTE_manager_decodePacket() {
         while (line != NULL && neighbourCellCount < MAX_NEIGHBOUR_CELLS) {
             if (strstr(line, "+QENG: \"neighbourcell intra\"")) {
                 // intra 셀 정보 추출
-                sscanf(line, "+QENG: \"neighbourcell intra\",\"LTE\",%hu,%x,%hhd,%hhd",
-                       &lteNeighbourCells[neighbourCellCount].pci,
-                       &lteNeighbourCells[neighbourCellCount].cid,
-                       &lteNeighbourCells[neighbourCellCount].rsrp,
-                       &lteNeighbourCells[neighbourCellCount].rsrq);
-                lteNeighbourCells[neighbourCellCount].isIntra = true;  // intra 셀로 표시
+                sscanf(line, "+QENG: \"neighbourcell intra\",\"LTE\",%hu,%hu,%hhd,%hhd,%*d,%*d,%*d,%*d,%*d,%*d,%*d",
+                    &lteNeighbourCells[neighbourCellCount].band,
+                    &lteNeighbourCells[neighbourCellCount].pci,
+                    &lteNeighbourCells[neighbourCellCount].rsrq,
+                    &lteNeighbourCells[neighbourCellCount].rsrp);
+
+                lteNeighbourCells[neighbourCellCount].cid = 0;  // CID는 수집할 수 없으므로 0으로 설정
+                lteNeighbourCells[neighbourCellCount].mnc = lteServingCell.mnc;  // 서빙 셀의 MNC 사용
                 neighbourCellCount++;
             }
             else if (strstr(line, "+QENG: \"neighbourcell inter\"")) {
                 // inter 셀 정보 추출
-                sscanf(line, "+QENG: \"neighbourcell inter\",\"LTE\",%hu,%x,%hhd,%hhd",
-                       &lteNeighbourCells[neighbourCellCount].pci,
-                       &lteNeighbourCells[neighbourCellCount].cid,
-                       &lteNeighbourCells[neighbourCellCount].rsrp,
-                       &lteNeighbourCells[neighbourCellCount].rsrq);
-                lteNeighbourCells[neighbourCellCount].isIntra = false;  // inter 셀로 표시
+                sscanf(line, "+QENG: \"neighbourcell inter\",\"LTE\",%hu,%hu,%hhd,%hhd,%*d,%*d,%*d,%*d,%*d",
+                    &lteNeighbourCells[neighbourCellCount].band,
+                    &lteNeighbourCells[neighbourCellCount].pci,
+                    &lteNeighbourCells[neighbourCellCount].rsrq,
+                    &lteNeighbourCells[neighbourCellCount].rsrp);
+
+                lteNeighbourCells[neighbourCellCount].cid = 0;  // CID는 수집할 수 없으므로 0으로 설정
+                lteNeighbourCells[neighbourCellCount].mnc = lteServingCell.mnc;  // 서빙 셀의 MNC 사용
                 neighbourCellCount++;
             }
             line = strtok(NULL, "\n");  // 다음 줄로 이동

@@ -10,10 +10,10 @@
 #include "Transmission_manager.h"
 
 unsigned long previousMillis = 0;
-const long interval = 10000;  // 10 seconds for server transmission
-const long wifiScanInterval = 4000;  // 2 seconds for WiFi scan
-const long servingcellInterval = 8000;  // 8 seconds for serving cell data collection
-const long neighbourcellInterval = 9000;  // 9 seconds for neighbour cell data collection
+const long interval = 30000;  // min 10 sec
+const long wifiScanInterval = interval - 6000;
+const long servingcellInterval = interval - 2000;
+const long neighbourcellInterval = interval - 1000;
 
 bool isWifiScanSent = false;
 bool isServingcellSent = false;

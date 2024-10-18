@@ -6,18 +6,19 @@
 struct LTEInfo {
     uint32_t cid;
     uint16_t pci;
-    uint8_t band;
-    uint16_t mnc;
+    uint16_t band;
+    uint8_t mnc;
     int8_t rsrp;
     int8_t rsrq;
 };
 
 struct LTENeighbourCellInfo {
+    uint32_t cid;   // Cannot collect. hardcode with 0
     uint16_t pci;
-    uint32_t cid;
+    uint16_t band;
+    uint8_t mnc;    // Same from serving cell
     int8_t rsrp;
     int8_t rsrq;
-    bool isIntra;
 };
 
 void LTE_manager_sendATCommand(const char* command);

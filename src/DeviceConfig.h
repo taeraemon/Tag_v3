@@ -11,6 +11,8 @@ private:
     int scan_toggle;
     int adv_interval;
     int transmit_power;
+    char server_ip[150];    // 서버 IP 저장
+    int server_port;        // 포트 번호 저장
 
 public:
     static DeviceConfig& getInstance() {
@@ -58,10 +60,27 @@ public:
         return transmit_power;
     }
 
+    // getter/setter for server IP
+    void setServerIP(const char* newIP) {
+        strcpy(server_ip, newIP);
+    }
+    const char* getServerIP() {
+        return server_ip;
+    }
+
+    // getter/setter for server port
+    void setServerPort(int port) {
+        server_port = port;
+    }
+    int getServerPort() {
+        return server_port;
+    }
+
 private:
-    DeviceConfig() : scan_toggle(1), adv_interval(100), transmit_power(80) {
+    DeviceConfig() : scan_toggle(1), adv_interval(100), transmit_power(80), server_port(55552) {
         strcpy(ssid, "default_ssid");
         strcpy(pswd, "default_pswd");
+        strcpy(server_ip, "111.118.38.151");
     }
 
     // 복사 생성자 금지

@@ -80,4 +80,14 @@ void loadDeviceConfigFromEEPROM() {
     char transmit_power[10];
     readEEPROM(EEPROM_ADDR_TXPW, transmit_power);
     config.setTransmitPower(atoi(transmit_power));
+
+    // 서버 IP 읽기
+    char server_ip[100];
+    readEEPROM(EEPROM_ADDR_SEVR, server_ip);
+    config.setServerIP(server_ip);
+
+    // 서버 포트 읽기
+    char server_port[10];
+    readEEPROM(EEPROM_ADDR_PORT, server_port);
+    config.setServerPort(atoi(server_port));
 }

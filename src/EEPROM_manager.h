@@ -19,7 +19,7 @@
 #define EEPROM_DFLT_INTV "10000"
 #define EEPROM_DFLT_TXPW "9"
 #define EEPROM_DFLT_SEVR "111.118.38.151"
-#define EEPROM_DFLT_PORT "55555"
+#define EEPROM_DFLT_PORT "55552"
 
 bool initEEPROM();
 void writeEEPROM(int addr, const char* data);

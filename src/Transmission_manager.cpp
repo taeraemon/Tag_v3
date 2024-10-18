@@ -21,52 +21,66 @@ void transmitData() {
     getWiFiData(&wifiData, &wifiCount);  // WiFi_manager에서 제공하는 함수
 
     // 패킷화
-    uint8_t packet[1024];
+    uint8_t packet[1024];  // 버퍼 크기 설정
     int packetLength = 0;
 
-    // UnixTime 정보 패킷화 (4 bytes)
+    // 1. 수집 시간 (UnixTime, 4바이트)
     packet[packetLength++] = (unixTime >> 24) & 0xFF;
     packet[packetLength++] = (unixTime >> 16) & 0xFF;
     packet[packetLength++] = (unixTime >> 8) & 0xFF;
     packet[packetLength++] = unixTime & 0xFF;
 
-    // LTE Serving Cell 정보 패킷화
-    packet[packetLength++] = (lteData.cid >> 24) & 0xFF;
+    // 2. 총 바이트 수 (LTE 신호와 WiFi 신호의 총 바이트 수)
+    uint16_t totalBytes = (11 * (1 + neighbourCount)) + (7 * wifiCount);  // LTE 1개 신호 + 인접 셀, WiFi 신호 수
+    packet[packetLength++] = (totalBytes >> 8) & 0xFF;
+    packet[packetLength++] = totalBytes & 0xFF;
+
+    // 3. LTE 신호 수 (1바이트)
+    packet[packetLength++] = 1 + neighbourCount;  // LTE 신호 수: 1개 + 인접 셀
+
+    // 4. LTE Serving Cell 정보 (11바이트)
+    packet[packetLength++] = (lteData.cid >> 24) & 0xFF;   // CID 상위 바이트
     packet[packetLength++] = (lteData.cid >> 16) & 0xFF;
     packet[packetLength++] = (lteData.cid >> 8) & 0xFF;
-    packet[packetLength++] = lteData.cid & 0xFF;
-    packet[packetLength++] = (lteData.pci >> 8) & 0xFF;
-    packet[packetLength++] = lteData.pci & 0xFF;
-    packet[packetLength++] = lteData.band;
-    packet[packetLength++] = (lteData.mnc >> 8) & 0xFF;
-    packet[packetLength++] = lteData.mnc & 0xFF;
-    packet[packetLength++] = lteData.rsrp;
-    packet[packetLength++] = lteData.rsrq;
+    packet[packetLength++] = lteData.cid & 0xFF;           // CID 하위 바이트
+    packet[packetLength++] = (lteData.pci >> 8) & 0xFF;    // PCI 상위 바이트
+    packet[packetLength++] = lteData.pci & 0xFF;           // PCI 하위 바이트
+    packet[packetLength++] = (lteData.band >> 8) & 0xFF;   // Band 상위 바이트 (2바이트 처리)
+    packet[packetLength++] = lteData.band & 0xFF;          // Band 하위 바이트
+    packet[packetLength++] = lteData.mnc;                  // MNC
+    packet[packetLength++] = lteData.rsrp;                 // RSRP
+    packet[packetLength++] = lteData.rsrq;                 // RSRQ
 
-    // LTE 인접 셀 정보 패킷화
+    // 5. LTE 인접 셀 정보 (신호당 11바이트)
     for (int i = 0; i < neighbourCount; i++) {
-        packet[packetLength++] = lteNeighbours[i].isIntra ? 0x01 : 0x00;
-        packet[packetLength++] = (lteNeighbours[i].cid >> 24) & 0xFF;
+        packet[packetLength++] = (lteNeighbours[i].cid >> 24) & 0xFF;   // CID 상위 바이트
         packet[packetLength++] = (lteNeighbours[i].cid >> 16) & 0xFF;
         packet[packetLength++] = (lteNeighbours[i].cid >> 8) & 0xFF;
-        packet[packetLength++] = lteNeighbours[i].cid & 0xFF;
-        packet[packetLength++] = (lteNeighbours[i].pci >> 8) & 0xFF;
-        packet[packetLength++] = lteNeighbours[i].pci & 0xFF;
-        packet[packetLength++] = lteNeighbours[i].rsrp;
-        packet[packetLength++] = lteNeighbours[i].rsrq;
+        packet[packetLength++] = lteNeighbours[i].cid & 0xFF;           // CID 하위 바이트
+        packet[packetLength++] = (lteNeighbours[i].pci >> 8) & 0xFF;    // PCI 상위 바이트
+        packet[packetLength++] = lteNeighbours[i].pci & 0xFF;           // PCI 하위 바이트
+        packet[packetLength++] = (lteNeighbours[i].band >> 8) & 0xFF;   // Band 상위 바이트 (2바이트 처리)
+        packet[packetLength++] = lteNeighbours[i].band & 0xFF;          // Band 하위 바이트
+        packet[packetLength++] = lteData.mnc;                           // MNC
+        packet[packetLength++] = lteNeighbours[i].rsrp;                 // RSRP
+        packet[packetLength++] = lteNeighbours[i].rsrq;                 // RSRQ
     }
 
-    // WiFi 정보 패킷화
+    // 6. WiFi 신호 수 (1바이트)
+    packet[packetLength++] = wifiCount;
+
+    // 7. WiFi 신호 정보 (신호당 7바이트)
     for (int i = 0; i < wifiCount; i++) {
-        memcpy(&packet[packetLength], wifiData[i].mac, 6);
+        memcpy(&packet[packetLength], wifiData[i].mac, 6);  // MAC 주소
         packetLength += 6;
-        packet[packetLength++] = wifiData[i].rssi;
+        packet[packetLength++] = wifiData[i].rssi;  // RSSI
     }
 
     // TCP 연결 및 전송
-    // connectTCP();
-    // sendPacket(packet, packetLength);
-    disconnectTCP();
+    if (connectTCP()) {
+        sendPacket(packet, packetLength);
+        disconnectTCP();
+    }
 
     printScanResults();
 
@@ -77,12 +91,20 @@ void transmitData() {
 
 // TCP 연결 함수
 bool connectTCP() {
+    DeviceConfig& config = DeviceConfig::getInstance();
+    
+    // 서버 IP와 포트 가져오기
+    const char* server_ip = config.getServerIP();
+    int server_port = config.getServerPort();
+
+    // TCP 연결 명령 생성
     Serial2.write("AT+QIOPEN=1,0,\"TCP\",\"");
-    Serial2.write(SERVER_IP);  // Transmission_manager.h에서 정의된 SERVER_IP 사용
+    Serial2.write(server_ip);  // EEPROM에서 가져온 IP 사용
     Serial2.write("\",");
-    Serial2.print(SERVER_PORT);  // Transmission_manager.h에서 정의된 SERVER_PORT 사용
+    Serial2.print(server_port);  // EEPROM에서 가져온 포트 사용
     Serial2.write(",0,0\r\n");
     delay(1000);  // 첫 번째 명령 후 대기
+    
     return true;  // 연결 상태는 확인하지 않고 항상 true 반환
 }
 
@@ -140,9 +162,10 @@ void printScanResults() {
     Serial.println("LTE Neighbour Cells Info:");
     for (int i = 0; i < neighbourCount; i++) {
         Serial.print("Neighbour "); Serial.print(i + 1); Serial.println(":");
-        Serial.print("Intra: "); Serial.println(lteNeighbours[i].isIntra ? "Yes" : "No");
         Serial.print("CID: "); Serial.println(lteNeighbours[i].cid);
         Serial.print("PCI: "); Serial.println(lteNeighbours[i].pci);
+        Serial.print("Band: "); Serial.println(lteNeighbours[i].band);
+        Serial.print("MNC: "); Serial.println(lteNeighbours[i].mnc);
         Serial.print("RSRP: "); Serial.println(lteNeighbours[i].rsrp);
         Serial.print("RSRQ: "); Serial.println(lteNeighbours[i].rsrq);
     }

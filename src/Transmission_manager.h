@@ -2,10 +2,7 @@
 #define TRANSMISSION_MANAGER_H
 
 #include <Arduino.h>
-
-#define SERVER_IP "111.118.38.151"
-#define SERVER_PORT 55552
-// TODO : Add EEPROM setup
+#include "DeviceConfig.h"
 
 void transmitData();
 bool connectTCP();         // TCP 연결 함수
