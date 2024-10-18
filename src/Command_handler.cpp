@@ -34,6 +34,9 @@ void processCommand(const std::string &command) {
             case CMD_RESET:
                 handleResetCommand();
                 break;
+            case CMD_SERVER:
+                handleServerIPCommand(cmd);
+                break;
             default:
                 Serial.println("Unknown command.");
                 break;
@@ -61,8 +64,15 @@ void handleScanCommand(const char* cmd) {
 void handleSSIDCommand(const char* cmd) {
     DeviceConfig& config = DeviceConfig::getInstance();
 
+    // 임시로 SSID를 복사
+    char tempSSID[100];  // SSID 최대 길이를 고려하여 충분히 큰 버퍼 사용
+    strcpy(tempSSID, &cmd[2]);  // cmd[2] 이후의 문자열을 복사
+
+    // \r 또는 \n 제거
+    removeTrailingNewlines(tempSSID);
+
     // SSID 설정
-    config.setSSID(&cmd[2]);  // DeviceConfig에서 SSID 설정
+    config.setSSID(tempSSID);  // 제거된 SSID 설정
 
     // RAM 또는 EEPROM에 저장 여부 확인 (cmd[1] 값에 따라 결정)
     if (cmd[1] == '1') {
@@ -77,6 +87,7 @@ void handleSSIDCommand(const char* cmd) {
     Serial.print("SSID Modified : ");
     Serial.println(config.getSSID());
 }
+
 
 // Scan or Advertise Config (Interval, Power)
 void handleConfigCommand(const char* cmd) {
@@ -124,4 +135,37 @@ void handleTimeCommand(const char* cmd) {
 void handleResetCommand() {
     Serial.println("Device reset requested.");
     resetEEPROM();
+}
+
+// Server IP 변경
+void handleServerIPCommand(const char* cmd) {
+    // 임시로 서버 IP를 복사
+    char tempIP[150];  // 서버 IP 최대 길이를 고려하여 충분히 큰 버퍼 사용
+    strcpy(tempIP, &cmd[1]);  // cmd[1] 이후의 문자열을 복사
+
+    // \r 또는 \n 제거
+    removeTrailingNewlines(tempIP);
+
+    DeviceConfig& config = DeviceConfig::getInstance();
+
+    // 서버 IP 설정
+    config.setServerIP(tempIP);  // 불필요한 문자가 제거된 서버 IP 설정
+
+    // EEPROM에 저장
+    writeEEPROM(EEPROM_ADDR_SEVR, config.getServerIP());
+
+    // 업데이트된 서버 IP 출력
+    Serial.print("Server IP Modified: ");
+    Serial.println(config.getServerIP());
+}
+
+// 문자열 끝에서 \r, \n 또는 \r\n 제거하는 함수
+void removeTrailingNewlines(char* str) {
+    int length = strlen(str);
+
+    // 문자열이 비어있지 않다면 검사
+    while (length > 0 && (str[length - 1] == '\r' || str[length - 1] == '\n')) {
+        str[length - 1] = '\0';  // 널 문자로 대체하여 제거
+        length--;  // 다음 문자를 확인
+    }
 }

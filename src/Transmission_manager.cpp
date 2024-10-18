@@ -162,10 +162,7 @@ void transmitDataHTTP() {
 
 
     // 서버 IP와 포트 설정 (DeviceConfig에서 가져옴)
-    // const char* serverURL = config.getServerIP();
-    const char* serverURL = "http://111.118.38.151:55000/receive";
-
-
+    const char* serverURL = config.getServerIP();
 
     // // AT 명령어 구성
     Serial.println("AT+QHTTPCFG=\"contextid\",1");
