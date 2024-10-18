@@ -9,7 +9,7 @@ private:
     char ssid[100];
     char pswd[100];
     int scan_toggle;
-    int adv_interval;
+    int scan_interval;
     int transmit_power;
     char server_ip[150];    // 서버 IP 저장
     int server_port;        // 포트 번호 저장
@@ -44,12 +44,12 @@ public:
         return scan_toggle;
     }
 
-    // getter/setter for adv_interval
+    // getter/setter for scan_interval
     void setAdvInterval(int interval) {
-        adv_interval = interval;
+        scan_interval = interval;
     }
     int getAdvInterval() {
-        return adv_interval;
+        return scan_interval;
     }
 
     // getter/setter for transmit_power
@@ -77,7 +77,7 @@ public:
     }
 
 private:
-    DeviceConfig() : scan_toggle(1), adv_interval(100), transmit_power(80), server_port(55552) {
+    DeviceConfig() : scan_toggle(1), scan_interval(100), transmit_power(80), server_port(55552) {
         strcpy(ssid, "default_ssid");
         strcpy(pswd, "default_pswd");
         strcpy(server_ip, "111.118.38.151");

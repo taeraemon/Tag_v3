@@ -71,10 +71,10 @@ void loadDeviceConfigFromEEPROM() {
     readEEPROM(EEPROM_ADDR_SCAN, scan_toggle);
     config.setScanToggle(atoi(scan_toggle));
 
-    // Advertise 주기 설정 읽기
-    char adv_interval[10];
-    readEEPROM(EEPROM_ADDR_INTV, adv_interval);
-    config.setAdvInterval(atoi(adv_interval));
+    // Scan 주기 설정 읽기
+    char scan_interval[10];
+    readEEPROM(EEPROM_ADDR_INTV, scan_interval);
+    config.setAdvInterval(atoi(scan_interval));
 
     // 최대 송신 전력 읽기
     char transmit_power[10];
