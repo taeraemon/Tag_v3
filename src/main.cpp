@@ -44,13 +44,18 @@ void setup() {
 
 void loop() {
     unsigned long currentMillis = millis();
+    
+    // DeviceConfig 인스턴스 가져오기
+    DeviceConfig& config = DeviceConfig::getInstance();
 
     // BLE 연결 상태 처리
     handleBLEConnectionChanges();
 
-    // BLE 연결 여부와 상관없이 WiFi 스캔 수행
+    // BLE 연결 여부와 상관없이 WiFi 스캔 수행 (scan_toggle 상태에 따라)
     if (currentMillis - previousMillis >= wifiScanInterval && !isWifiScanSent) {
-        ScanAndSend();  // WiFi 스캔
+        if (config.getScanToggle() == 1) {  // scan_toggle 상태가 1일 때만 스캔
+            ScanAndSend();  // WiFi 스캔
+        }
         isWifiScanSent = true;
     }
 
@@ -65,7 +70,7 @@ void loop() {
         isNeighbourcellSent = true;
     }
 
-    // 주기적으로 서버로 데이터 전송 (10초 주기)
+    // 주기적으로 서버로 데이터 전송
     if (currentMillis - previousMillis >= interval) {
         previousMillis = currentMillis;  // 타이머 리셋
         
